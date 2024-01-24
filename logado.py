@@ -1,26 +1,18 @@
+from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from mensagens import mensagem_erro, mensagem_sucesso
 
 
-def logado(pagina):
-    
+def logado(pagina, navegador, usuario, senha):
     try:
         # Obtendo todos os cookies
-        cookies = pagina.cookies()
+        identificador_erro = pagina.wait_for_selector('text="Ocorreu um problema e não foi possível carregar a página."', timeout=5000)
         
-        # Variável para verificar se perfil está logado
-        perfil_logado = False
+        if identificador_erro:
+            navegador.close()
+            acessar_perfil_instagram(usuario, senha)
+            return True
         
-        # Iterar sobre os cookies para verificar o cookie "sessionid"
-        for cookie in cookies:
-            if cookie['name'] == 'sessionid':
-                mensagem_sucesso('Perfil logado com sucesso!')
-                perfil_logado = True
-                break
-
-        if not perfil_logado:
-            mensagem_erro('O perfil foi deslogado. Refazendo o login...')
-            return False
         return True
-    except:
-        mensagem_erro('Não foi possível relogar no perfil!')
+    except Exception as a:
+        mensagem_erro(f'Erro na função logado: {a}')
         return False

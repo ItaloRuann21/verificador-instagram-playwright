@@ -1,3 +1,4 @@
+from contas import contas_ativas, nao_fez_login
 from mensagens import mensagem_erro, mensagem_normal, mensagem_sucesso
 
 
@@ -22,8 +23,11 @@ def acessar_perfil_instagram(pagina, usuario, senha):
         # Esperando o seletor do span página inicial aparecer
         pagina.wait_for_selector('span:has-text("Página inicial")')
         
+        contas_ativas(usuario, senha)
+        
         return True
     except:
         mensagem_erro('Erro ao fazer login. Tentando outra conta!')
+        nao_fez_login(usuario, senha)
         return False
     

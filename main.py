@@ -1,4 +1,5 @@
 from abrir_navegador import abrir_navegador
+from contas import contas_ativas, contas_inativas
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.verificar_contas import verificacao_contas
 from logado import logado
@@ -19,14 +20,19 @@ def run(playwright, modo, perfis):
         for perfil in lista_perfis:
             
             # Coletando usuario e senha da lista de perfis
-            usuario_instagram, senha_instagram = perfil.split()
+            values = perfil.split()
+            if len(values) != 2:
+                continue
+
+            usuario_instagram, senha_instagram = values
 
             # Acessar o perfil do Instagram
-            res =  acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
+            res = acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
 
-            # Se a resposta da função for falsa, fecha navegador e continua o loop for para avançar na próxima conta.
+            # Se a resposta da função for falsa, fecha o navegador, recria a página e continua o loop for para avançar na próxima conta.
             if res == False:
                 navegador.close()
+                navegador, pagina = abrir_navegador(playwright, modo)
                 continue
             else:
                 # Se o login foi efetuado com sucesso, para o loop for
@@ -34,16 +40,22 @@ def run(playwright, modo, perfis):
             
         # Iniciando verificação das contas
         for perfil in lista_perfis:
-            usuario_instagram, senha_instagram = perfil.split()
-            res_verificacao = verificacao_contas(pagina, usuario_instagram, senha_instagram)
+            values = perfil.split()
+            if len(values) != 2:
+                continue
+
+            usuario_instagram, senha_instagram = values
             
-            if res_verificacao == False:
-                mensagem_erro(f"Não foi possível verificar o perfil: {usuario_instagram}")
-                break  # Encerra o loop se a verificação falhar
-                        
+            res = verificacao_contas(pagina, usuario_instagram, senha_instagram)
 
-        # Fechar o navegador após terminar as operações
-        navegador.close()
-
+            
+            if res == False:
+                navegador.close()
+                navegador, pagina = abrir_navegador(playwright, modo)
+                acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
+                continue
+                
+            
+            
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
