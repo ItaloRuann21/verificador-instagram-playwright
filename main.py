@@ -2,7 +2,6 @@ from abrir_navegador import abrir_navegador
 from contas import contas_ativas, contas_inativas
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.verificar_contas import verificacao_contas
-from logado import logado
 from mensagens import mensagem_erro, mensagem_normal, mensagem_titulo
 
 
