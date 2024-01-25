@@ -18,7 +18,7 @@ def abrir_navegador(playwright, modo):
         
         # construtor do navegador
         navegador = playwright.chromium.launch(
-            headless=modo,
+            headless=modo, executable_path='C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
             args=[
                 '--no-sandbox',
                 '--ignore-certificate-errors',

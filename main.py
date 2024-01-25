@@ -2,7 +2,8 @@ from abrir_navegador import abrir_navegador
 from contas import contas_ativas, contas_inativas
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.verificar_contas import verificacao_contas
-from mensagens import mensagem_erro, mensagem_normal, mensagem_titulo
+from mensagens import (mensagem_erro, mensagem_fim, mensagem_normal,
+                       mensagem_titulo)
 
 
 def run(playwright, modo, perfis):
@@ -54,7 +55,7 @@ def run(playwright, modo, perfis):
                 acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
                 continue
                 
-            
+        mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
             
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
