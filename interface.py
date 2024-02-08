@@ -1,11 +1,13 @@
 import sys
 from threading import Thread
+
 from playwright.sync_api import sync_playwright
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
+from PyQt5.QtCore import QObject, Qt, pyqtSignal
 from PyQt5.QtWidgets import (QApplication, QComboBox, QLabel, QPushButton,
                              QTextEdit, QVBoxLayout, QWidget)
 
 from main import run
+
 
 class MainWindow(QWidget):
     # Sinal personalizado para fechar o aplicativo
@@ -14,7 +16,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('Projeto Verificador XCTRL')
+        self.setWindowTitle('Italo Automações - Verificador')
         self.setGeometry(100, 100, 500, 300)
 
         layout = QVBoxLayout()
@@ -40,32 +42,48 @@ class MainWindow(QWidget):
 
         estilo = """
             QWidget {
-                background-color: #F0F0F0;
-                font-family: Arial, sans-serif;
+                background-color: #1B1B1E;
+                font-family: poppins, sans-serif;
             }
-            
+
             QLabel {
                 font-size: 14px;
                 margin-bottom: 5px;
+                color: #FFF;
             }
-            
+
             QTextEdit {
                 min-height: 100px;
                 font-size: 12px;
+                background-color: #1B1B1E;
+                color: #FFF;
             }
-            
+
             QComboBox, QPushButton {
                 font-size: 14px;
                 padding: 5px;
                 margin-top: 5px;
-                background-color: #4CAF50;
+                background-color: #4863F7;
                 color: white;
                 border: none;
                 border-radius: 3px;
             }
-            
+
             QPushButton:hover {
-                background-color: #45a049;
+                background-color: #3A4FF5;
+            }
+
+            QLineEdit {
+                border: 1px solid #1B1B1E;
+                border-radius: 3px;
+                padding: 5px;
+                background-color: #1B1B1E;
+                color: #FFF;
+                selection-background-color: #4863F7;
+            }
+            
+            QLineEdit:focus {
+                border: 1px solid #4863F7;
             }
         """
 
@@ -93,5 +111,5 @@ def main():
     window.show()
     sys.exit(app.exec_())
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

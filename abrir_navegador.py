@@ -18,7 +18,7 @@ def abrir_navegador(playwright, modo):
         
         # construtor do navegador
         navegador = playwright.chromium.launch(
-            headless=modo, executable_path='C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+            headless=modo, executable_path='C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
             args=[
                 '--no-sandbox',
                 '--ignore-certificate-errors',
@@ -43,5 +43,5 @@ def abrir_navegador(playwright, modo):
         
         return navegador, pagina
     
-   except:
-       mensagem_erro('Erro no navegador!')
+   except Exception as error:
+       mensagem_erro(f'Erro no navegador! {error}')
