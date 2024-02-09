@@ -18,7 +18,13 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle('IR Automações')
-        self.setGeometry(100, 100, 500, 300)
+        self.resize(500, 300)  # Definindo o tamanho da janela
+
+        # Centralizando a janela na tela
+        screen_geometry = QApplication.desktop().screenGeometry()
+        x = (screen_geometry.width() - self.width()) // 2
+        y = (screen_geometry.height() - self.height()) // 8
+        self.move(x, y)
         
         # Icone da interface
         icon = QIcon('./storage/img/irvtbot.png')
@@ -31,7 +37,6 @@ class MainWindow(QWidget):
         pixmap = icone_logo.pixmap(250, 250)
         label_icone.setPixmap(pixmap)
         label_icone.setAlignment(Qt.AlignCenter)
-
 
         layout = QVBoxLayout()
         
@@ -141,4 +146,3 @@ def main():
     window = MainWindow()
     window.show()
     return app  # Retorna a instância de QApplication
-

@@ -4,3 +4,5 @@ pysimplegui
 pytz
 playwright
 termcolor
+pyinstaller
+Pillow

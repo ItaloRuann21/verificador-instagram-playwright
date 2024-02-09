@@ -106,8 +106,17 @@ def verificar_login(email, password, window, app):
 def interface_login(app):
     window = QWidget()
     window.setWindowTitle('IR Automações')
-    window.setGeometry(50, 50, 300, 200)
+    window.resize(500, 300)  # Definindo o tamanho da janela
+
+    # Centralizando a janela na tela
+    screen_geometry = app.desktop().screenGeometry()
+    x = int((screen_geometry.width() - window.width()) / 2)
+    y = int((screen_geometry.height() - window.height()) / 5)
+    window.move(x, y)
+
     layout = QVBoxLayout()
+    window.setLayout(layout)
+    window.show()
     
     # Icone da interface
     icon = QIcon('./storage/img/irvtbot.png')
@@ -149,10 +158,12 @@ def interface_login(app):
     email_label.setStyleSheet("""
         color: rgb(255, 255, 255);
         font-family: poppins;
+        font-size: 14px;
     """)
     password_label.setStyleSheet("""
         color: rgb(255, 255, 255);
         font-family: poppins;
+        font-size: 14px;
     """)
     mensagem_label.setStyleSheet("""
         color: rgb(255, 255, 255);
@@ -168,6 +179,7 @@ def interface_login(app):
         border-radius: 9px;
         padding: 5px;
         border-color: #8B8682;
+        font-size: 14px;
     """)
     password_input.setStyleSheet("""
         background-color: #1B1B1E;
@@ -177,13 +189,14 @@ def interface_login(app):
         border-radius: 9px;
         padding: 5px;
         border-color: #8B8682;
+        font-size: 14px;
     """)
 
     login_button.setStyleSheet("""
         background-color: rgb(72, 99, 247);
         color: rgb(255, 255, 255);
         font-family: poppins;
-        font-size: 12px;
+        font-size: 14px;
         border: 1px solid rgb(58, 58, 58);
         border-radius: 9px;
         padding: 5px 10px;

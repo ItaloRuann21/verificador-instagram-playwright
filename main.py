@@ -1,11 +1,8 @@
-from termcolor import colored
-
 from abrir_navegador import abrir_navegador
-from contas import quantidade_ativas, quantidade_inativas
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.verificar_contas import verificacao_contas
 from mensagens import (mensagem_erro, mensagem_fim, mensagem_normal,
-                       mensagem_sucesso, mensagem_titulo)
+                       mensagem_titulo)
 
 
 def run(playwright, modo, perfis):
@@ -50,25 +47,15 @@ def run(playwright, modo, perfis):
             
             res = verificacao_contas(pagina, usuario_instagram, senha_instagram)
 
-            # Verificar se o instagram está com bloqueio. Se estiver, retorna outra conta
+            # Verificar se o instagram está com bloqueio. Se estiver, retorna outra
             if res == False:
                 navegador.close()
                 navegador, pagina = abrir_navegador(playwright, modo)
                 acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
                 continue
                 
-        
-        # Instanciando a quantidade de contas ativas
-        quantidade_ativa = quantidade_ativas('contas_ativas.txt')
-        
-        # Instanciando a quantidade de contas inativas
-        quantidade_inativa = quantidade_inativas('contas_inativas.txt')
-        
         print('')
-        mensagem_fim('TODAS AS CONTAS FORAM VERIFICADAS!')
-        
-        print(f'Contas ativas: {colored(quantidade_ativa, 'green')}')
-        print(f'Contas inativas: {colored(quantidade_inativa, 'red')}')
+        mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
             
     except Exception as e:
         print(f"Ocorreu um erro: {e}")

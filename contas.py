@@ -33,14 +33,3 @@ def nao_fez_login(usuario, senha):
         arquivo.seek(0)
         arquivo.writelines(conteudo)
         
-def quantidade_ativas(nome_arquivo):
-    with open(nome_arquivo, 'r') as arquivo:  # Abre o arquivo em modo de leitura ('r')
-        quant_contas_ativas = sum(1 for linha in arquivo)  # Conta o número de linhas no arquivo
-    return quant_contas_ativas  # Retorna o número de linhas contadas 
-
-
-def quantidade_inativas(nome_arquivo):
-    with open(nome_arquivo, 'r') as arquivo:  # Abre o arquivo em modo de leitura ('r')
-        quant_contas_inativas = sum(1 for linha in arquivo)  # Conta o número de linhas no arquivo
-    return quant_contas_inativas  # Retorna o número de linhas contadas
-    
