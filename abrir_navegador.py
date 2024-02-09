@@ -18,7 +18,7 @@ def abrir_navegador(playwright, modo):
         
         # construtor do navegador
         navegador = playwright.chromium.launch(
-            headless=modo, executable_path='C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+            headless=modo, executable_path='C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
             args=[
                 '--no-sandbox',
                 '--ignore-certificate-errors',
@@ -35,10 +35,10 @@ def abrir_navegador(playwright, modo):
         # Configurando a linguagem da página para português
         pagina.set_extra_http_headers({'Accept-Language': 'pt-br'})
         
-        largura, altura = size()
+        # largura, altura = size()
         
         # Definindo o tamanho da tela
-        pagina.set_viewport_size({"width": largura, "height": altura})
+        pagina.set_viewport_size({"width": 1000, "height": 600})
 
         
         return navegador, pagina

@@ -13,11 +13,13 @@ def acessar_perfil_instagram(pagina, usuario, senha):
         # Definindo usuário e senha do instagram
         pagina.wait_for_selector('[name="username"]')
         pagina.fill('[name="username"]', usuario)
+        pagina.wait_for_timeout(2000)
         pagina.wait_for_selector('[name="password"]')
         pagina.fill('[name="password"]', senha)
         
         # Confirmando credenciais
         pagina.wait_for_selector('text="Entrar"')
+        pagina.wait_for_timeout(2000)
         pagina.click('text="Entrar"')
         
         # Esperando o seletor do span página inicial aparecer

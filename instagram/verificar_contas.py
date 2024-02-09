@@ -24,7 +24,7 @@ def verificacao_contas(pagina, usuario, senha):
             pass
         
         try:
-            pagina.wait_for_selector('.x78zum5.x1q0g3np.xieb3on', timeout=8000)
+            pagina.wait_for_selector('.x78zum5.x1q0g3np.xieb3on', timeout=5000)
             mensagem_sucesso(f'O perfil {usuario} está ativo!')
             contas_ativas(usuario, senha)
         except:

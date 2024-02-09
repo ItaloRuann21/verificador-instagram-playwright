@@ -2,7 +2,8 @@ import sys
 from threading import Thread
 
 from playwright.sync_api import sync_playwright
-from PyQt5.QtCore import QObject, Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QComboBox, QLabel, QPushButton,
                              QTextEdit, QVBoxLayout, QWidget)
 
@@ -16,33 +17,53 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('Italo Automações - Verificador')
+        self.setWindowTitle('IR Automações')
         self.setGeometry(100, 100, 500, 300)
+        
+        # Icone da interface
+        icon = QIcon('./storage/img/irvtbot.png')
+        self.setWindowIcon(icon)
+        
+        # icone da logo principal
+        logo = './storage/img/verificador.png'
+        icone_logo = QIcon(logo)
+        label_icone = QLabel()
+        pixmap = icone_logo.pixmap(250, 250)
+        label_icone.setPixmap(pixmap)
+        label_icone.setAlignment(Qt.AlignCenter)
+
 
         layout = QVBoxLayout()
+        
+        # Criando qlabel para quebra de linha
+        quebra_linha = QLabel('')
 
         label_perfis = QLabel('Digite os perfis do Instagram')
         label_perfis.setAlignment(Qt.AlignCenter)
-        text_edit_perfis = QTextEdit()
-        label_modo = QLabel('Você quer ver acontecendo?')
+        self.text_edit_perfis = QTextEdit()
+        label_modo = QLabel('Navegador Visível')
         label_modo.setAlignment(Qt.AlignCenter)
         combo_modo = QComboBox()
         combo_modo.addItems(['Sim', 'Não'])
 
         btn_iniciar = QPushButton('Iniciar')
-        btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(text_edit_perfis.toPlainText(), combo_modo.currentText()))
+        btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(self.text_edit_perfis.toPlainText().strip(), combo_modo.currentText()))
 
+        layout.addWidget(label_icone)
+        layout.addWidget(quebra_linha)
         layout.addWidget(label_perfis)
-        layout.addWidget(text_edit_perfis)
+        layout.addWidget(self.text_edit_perfis)
+        layout.addWidget(quebra_linha)
         layout.addWidget(label_modo)
         layout.addWidget(combo_modo)
+        layout.addWidget(quebra_linha)
         layout.addWidget(btn_iniciar)
 
         self.setLayout(layout)
 
         estilo = """
             QWidget {
-                background-color: #1B1B1E;
+                background-color: #363636;
                 font-family: poppins, sans-serif;
             }
 
@@ -59,11 +80,21 @@ class MainWindow(QWidget):
                 color: #FFF;
             }
 
-            QComboBox, QPushButton {
+            QPushButton {
                 font-size: 14px;
                 padding: 5px;
                 margin-top: 5px;
                 background-color: #4863F7;
+                color: white;
+                border: none;
+                border-radius: 3px;
+            }
+            
+            QComboBox {
+                font-size: 14px;
+                padding: 5px;
+                margin-top: 5px;
+                background-color: #1B1B1E;
                 color: white;
                 border: none;
                 border-radius: 3px;
@@ -109,7 +140,5 @@ def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    sys.exit(app.exec_())
+    return app  # Retorna a instância de QApplication
 
-# if __name__ == '__main__':
-#     main()
