@@ -38,21 +38,36 @@ def run(playwright, modo, perfis):
                 break
             
         # Iniciando verificação das contas
-        for perfil in lista_perfis:
+        posicao_conta = 0
+        while posicao_conta < len(lista_perfis):
+            perfil = lista_perfis[posicao_conta]
             values = perfil.split()
             if len(values) != 2:
+                posicao_conta += 1
                 continue
 
             usuario_instagram, senha_instagram = values
-            
+
             res = verificacao_contas(pagina, usuario_instagram, senha_instagram)
 
-            # Verificar se o instagram está com bloqueio. Se estiver, retorna outra
+            # Verificar se a verificação falhou
             if res == False:
                 navegador.close()
                 navegador, pagina = abrir_navegador(playwright, modo)
-                acessar_perfil_instagram(pagina, usuario_instagram, senha_instagram)
+                
+                # Escolher a segunda conta da lista na posição atual
+                segunda_conta = lista_perfis[posicao_conta + 1].split()
+                segundo_usuario_instagram, segundo_senha_instagram = segunda_conta[0], segunda_conta[1]
+
+                acessar_perfil_instagram(pagina, segundo_usuario_instagram, segundo_senha_instagram)
+
+                # Incrementar a posição para pular a próxima conta
+                posicao_conta += 2
                 continue
+
+            posicao_conta += 1
+
+
                 
         print('')
         mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')

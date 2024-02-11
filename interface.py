@@ -19,7 +19,7 @@ class MainWindow(QWidget):
 
         self.setWindowTitle('IR Automações')
         self.resize(500, 300)  # Definindo o tamanho da janela
-
+        
         # Centralizando a janela na tela
         screen_geometry = QApplication.desktop().screenGeometry()
         x = (screen_geometry.width() - self.width()) // 2
@@ -84,6 +84,8 @@ class MainWindow(QWidget):
                 background-color: #1B1B1E;
                 color: #FFF;
             }
+            
+            
 
             QPushButton {
                 font-size: 14px;
