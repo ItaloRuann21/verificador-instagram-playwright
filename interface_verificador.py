@@ -1,22 +1,23 @@
 import sys
+from threading import Thread
 
 from playwright.sync_api import sync_playwright
-from PyQt5.QtCore import QObject, Qt, QThread, QTimer, pyqtSignal
+from PyQt5.QtCore import QObject, Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
                              QPushButton, QTextEdit, QVBoxLayout, QWidget)
 
 from main import run
-from styles.css_interface_verificador import estilo_verificador
+from styles.css_verificador import estilo_verificador
 
 
-class Contadores(QObject):  
+class Contadores(QObject):
     contador_ativas_atualizado = pyqtSignal(int)
     contador_inativas_atualizado = pyqtSignal(int)
     contador_bug_atualizado = pyqtSignal(int)
 
     def __init__(self):
-        super().__init__()  
+        super().__init__()
         self.contador_ativas = 0
         self.contador_inativas = 0
         self.contador_bug = 0
@@ -28,22 +29,6 @@ class Contadores(QObject):
         self.contador_ativas_atualizado.emit(self.contador_ativas)
         self.contador_inativas_atualizado.emit(self.contador_inativas)
         self.contador_bug_atualizado.emit(self.contador_bug)
-
-# Instância global da classe Contadores
-contadores = Contadores()
-
-class Worker(QThread):
-    atualizar_contadores = pyqtSignal(int, int, int)
-
-    def __init__(self, perfis, modo):
-        super().__init__()
-        self.perfis = perfis
-        self.modo = modo
-
-    def run(self):
-        with sync_playwright() as playwright:
-            contador_ativas, contador_inativas, contador_bug = run(playwright, self.modo, self.perfis)
-            self.atualizar_contadores.emit(contador_ativas, contador_inativas, contador_bug)
 
 
 class MainWindow(QWidget):
@@ -148,19 +133,18 @@ class MainWindow(QWidget):
         self.timer.timeout.connect(self.atualizar_interface)
         self.timer.start(1000)  # 1000 ms = 1 segundo
 
-        self.worker = Worker('', '')  # Instância do Worker
-
-        # Conectar sinais dos Workers aos slots da interface
-        self.worker.atualizar_contadores.connect(self.atualizar_contadores_interface)
+        # Instância global da classe Contadores
+        self.contadores = Contadores()
 
     def iniciar_em_thread(self, perfis, modo):
-        self.worker.perfis = perfis
-        self.worker.modo = modo
-        self.worker.start()
+        thread = Thread(target=self.iniciar, args=(perfis, modo))
+        thread.start()
 
-    def atualizar_contadores_interface(self, contador_ativas, contador_inativas, contador_bug):
-        # Atualizar a interface com os valores dos contadores
-        contadores.atualizar_contadores(contador_ativas, contador_inativas, contador_bug)
+    def iniciar(self, perfis, modo):
+        playwright = sync_playwright().start()
+        contador_ativas, contador_inativas, contador_bug = run(playwright, modo, perfis)
+        self.contadores.atualizar_contadores(contador_ativas, contador_inativas, contador_bug)
+        playwright.stop()
 
     def closeEvent(self, event):
         self.fechar_sinal.emit()
@@ -168,9 +152,10 @@ class MainWindow(QWidget):
 
     def atualizar_interface(self):
         # Atualiza a interface com os valores atuais dos contadores
-        self.mensagem_ativa.setText(str(contadores.contador_ativas))
-        self.mensagem_inativa.setText(str(contadores.contador_inativas))
-        self.mensagem_bug.setText(str(contadores.contador_bug))
+        self.mensagem_ativa.setText(str(self.contadores.contador_ativas))
+        self.mensagem_inativa.setText(str(self.contadores.contador_inativas))
+        self.mensagem_bug.setText(str(self.contadores.contador_bug))
+
 
 def main():
     app = QApplication(sys.argv)
@@ -178,5 +163,6 @@ def main():
     window.show()
     sys.exit(app.exec_())
 
-if __name__ == "__main__":
-    main()
+
+# if __name__ == "__main__":
+#     main()
