@@ -1,6 +1,6 @@
 from pyautogui import size
 
-from mensagens import mensagem_erro
+from mensagens.mensagens_coloridas import mensagem_erro
 from useragent import user_agent_aleatorio
 
 

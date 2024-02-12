@@ -6,9 +6,9 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (QApplication, QLabel, QLineEdit, QMessageBox,
                              QPushButton, QVBoxLayout, QWidget)
 
-from db.db import verificar_login
-from interface import MainWindow  # Importando a outra interface
-from mensagens_att import mensagem_atualização
+from db.banco_de_dados import verificar_login
+from interface_verificador import MainWindow
+from mensagens.mensagens_att import mensagem_atualização
 from storage.config.credenciais import carregar_credenciais, salvar_credenciais
 
 

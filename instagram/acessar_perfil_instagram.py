@@ -1,5 +1,6 @@
 from contas import contas_ativas, nao_fez_login
-from mensagens import mensagem_erro, mensagem_normal, mensagem_sucesso
+from mensagens.mensagens_coloridas import (mensagem_erro, mensagem_normal,
+                                           mensagem_sucesso)
 
 
 def acessar_perfil_instagram(pagina, usuario, senha):

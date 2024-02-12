@@ -1,8 +1,10 @@
 from abrir_navegador import abrir_navegador
+from contas import (contas_ativas, contas_inativas, erro_ao_verificar,
+                    nao_fez_login)
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.verificar_contas import verificacao_contas
-from mensagens import (mensagem_erro, mensagem_fim, mensagem_normal,
-                       mensagem_titulo)
+from mensagens.mensagens_coloridas import (mensagem_erro, mensagem_fim,
+                                           mensagem_normal, mensagem_titulo)
 
 
 def run(playwright, modo, perfis):
@@ -15,6 +17,11 @@ def run(playwright, modo, perfis):
         # Instancia dp navegador e pagina
         navegador, pagina =  abrir_navegador(playwright, modo)
         
+        # contadores
+        contador_ativas = 0
+        contador_inativas = 0
+        contador_bug = 0
+    
         # iterando para cada perfil, obter o usuario e senha
         for perfil in lista_perfis:
             
@@ -49,9 +56,21 @@ def run(playwright, modo, perfis):
             usuario_instagram, senha_instagram = values
 
             res = verificacao_contas(pagina, usuario_instagram, senha_instagram)
+            
+            if res == 1:
+                contador_ativas += 1
+                contas_ativas(usuario_instagram, senha_instagram)
+            elif res == 2:
+                contador_inativas += 1
+                contas_inativas(usuario_instagram, senha_instagram)
+            elif res == 3:
+                contador_bug += 1
+                erro_ao_verificar(usuario_instagram, senha_instagram)
 
             # Verificar se a verificação falhou
             if res == False:
+                contador_bug += 1
+                erro_ao_verificar(usuario_instagram, senha_instagram)
                 navegador.close()
                 navegador, pagina = abrir_navegador(playwright, modo)
                 
@@ -64,13 +83,11 @@ def run(playwright, modo, perfis):
                 # Incrementar a posição para pular a próxima conta
                 posicao_conta += 2
                 continue
-
-            posicao_conta += 1
-
-
-                
-        print('')
-        mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
             
+            posicao_conta += 1
+            
+        mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
+        return contador_ativas, contador_inativas, contador_bug       
+
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
