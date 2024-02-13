@@ -23,12 +23,13 @@ class Contadores(QObject):
         self.contador_bug = 0
 
     def atualizar_contadores(self, contador_ativas, contador_inativas, contador_bug):
-        self.contador_ativas += contador_ativas
-        self.contador_inativas += contador_inativas
-        self.contador_bug += contador_bug
+        self.contador_ativas = contador_ativas
+        self.contador_inativas = contador_inativas
+        self.contador_bug = contador_bug
         self.contador_ativas_atualizado.emit(self.contador_ativas)
         self.contador_inativas_atualizado.emit(self.contador_inativas)
         self.contador_bug_atualizado.emit(self.contador_bug)
+
 
 
 class MainWindow(QWidget):
@@ -131,7 +132,7 @@ class MainWindow(QWidget):
         # QTimer para atualizar a interface a cada segundo
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.atualizar_interface)
-        self.timer.start(1000)  # 1000 ms = 1 segundo
+        self.timer.start(0000)  # 1000 ms = 1 segundo
 
         # Instância global da classe Contadores
         self.contadores = Contadores()
@@ -141,9 +142,11 @@ class MainWindow(QWidget):
         thread.start()
 
     def iniciar(self, perfis, modo):
+        def callback(contador_ativas, contador_inativas, contador_bug):
+            self.contadores.atualizar_contadores(contador_ativas, contador_inativas, contador_bug)
+
         playwright = sync_playwright().start()
-        contador_ativas, contador_inativas, contador_bug = run(playwright, modo, perfis)
-        self.contadores.atualizar_contadores(contador_ativas, contador_inativas, contador_bug)
+        run(playwright, modo, perfis, callback)  # Passando a função de callback como argumento
         playwright.stop()
 
     def closeEvent(self, event):
@@ -164,5 +167,5 @@ def main():
     sys.exit(app.exec_())
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

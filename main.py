@@ -7,7 +7,7 @@ from mensagens.mensagens_coloridas import (mensagem_erro, mensagem_fim,
                                            mensagem_normal, mensagem_titulo)
 
 
-def run(playwright, modo, perfis):
+def run(playwright, modo, perfis, callback):
     try:
         mensagem_titulo('Iniciando Verificação')
         
@@ -43,8 +43,8 @@ def run(playwright, modo, perfis):
             else:
                 # Se o login foi efetuado com sucesso, para o loop for
                 break
-            
-        # Iniciando verificação das contas
+
+        # Verificação das contas
         posicao_conta = 0
         while posicao_conta < len(lista_perfis):
             perfil = lista_perfis[posicao_conta]
@@ -59,12 +59,15 @@ def run(playwright, modo, perfis):
             
             if res == 1:
                 contador_ativas += 1
+                callback(contador_ativas, contador_inativas, contador_bug)  # Chamada do callback
                 contas_ativas(usuario_instagram, senha_instagram)
             elif res == 2:
                 contador_inativas += 1
+                callback(contador_ativas, contador_inativas, contador_bug)  # Chamada do callback
                 contas_inativas(usuario_instagram, senha_instagram)
             elif res == 3:
                 contador_bug += 1
+                callback(contador_ativas, contador_inativas, contador_bug)  # Chamada do callback
                 erro_ao_verificar(usuario_instagram, senha_instagram)
 
             # Verificar se a verificação falhou

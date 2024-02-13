@@ -1,4 +1,4 @@
-from pyautogui import size
+
 
 from mensagens.mensagens_coloridas import mensagem_erro
 from useragent import user_agent_aleatorio
@@ -35,10 +35,9 @@ def abrir_navegador(playwright, modo):
         # Configurando a linguagem da página para português
         pagina.set_extra_http_headers({'Accept-Language': 'pt-br'})
         
-        # largura, altura = size()
         
         # Definindo o tamanho da tela
-        pagina.set_viewport_size({"width": 1000, "height": 600})
+        pagina.set_viewport_size({"width": 600, "height": 600})
 
         
         return navegador, pagina
