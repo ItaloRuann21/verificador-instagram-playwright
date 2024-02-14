@@ -53,12 +53,11 @@ def run(playwright, modo, navegadores, perfis, callback):
                 break
 
         # Verificação das contas
-        posicao_conta = 0
-        while posicao_conta < len(lista_perfis):
-            perfil = lista_perfis[posicao_conta]
+        primeiros_perfis = lista_perfis[:5]  # Obtém os 5 primeiros perfis da lista
+
+        for perfil in lista_perfis:
             values = perfil.split()
             if len(values) != 2:
-                posicao_conta += 1
                 continue
 
             usuario_instagram, senha_instagram = values
@@ -92,30 +91,25 @@ def run(playwright, modo, navegadores, perfis, callback):
                 erro_ao_verificar(usuario_instagram, senha_instagram)
 
             # Se a verificação falhou, fecha o navegador, abre um novo e continua para o próximo perfil
+            # Se a verificação falhou, fecha o navegador, abre um novo e continua para o próximo perfil
             elif res == False:
                 contador_bug += 1
                 erro_ao_verificar(usuario_instagram, senha_instagram)
                 navegador.close()
                 navegador, pagina = abrir_navegador(playwright, modo, navegadores)
                 
-                # Seleciona a segunda conta da lista sucessivamente na posição atual
-                segunda_conta = lista_perfis[posicao_conta + 1].split()
-                segundo_usuario_instagram, segundo_senha_instagram = segunda_conta[0], segunda_conta[1]
-
-                # Acessa o perfil do Instagram com o segundo usuário e senha
-                acessar_perfil_instagram(pagina, segundo_usuario_instagram, segundo_senha_instagram)
-
-                # Incrementa a posição para pular a próxima conta
-                posicao_conta += 2
-                continue
-            
-            
-            
-            posicao_conta += 1
-            
+                # Seleciona a próxima conta da lista original
+                indice_conta = primeiros_perfis.index(perfil) + 1
+                if indice_conta < len(primeiros_perfis):
+                    proximo_perfil = primeiros_perfis[indice_conta]
+                    proximo_usuario_instagram, proxima_senha_instagram = proximo_perfil.split()
+                    acessar_perfil_instagram(pagina, proximo_usuario_instagram, proxima_senha_instagram)
+                    continue
+                
+                
         # Exibe uma mensagem de fim após a verificação de todas as contas
         mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
-        return contador_ativas, contador_inativas, contador_bug       
+        return contador_ativas, contador_inativas, contador_bug    
 
     except Exception as e:
         # Exibe uma mensagem de erro se ocorrer uma exceção

@@ -76,7 +76,7 @@ class MainWindow(QWidget):
         label_perfis.setAlignment(Qt.AlignCenter)
         self.lista_de_perfis = QTextEdit()
         # Adicionando o placeholder
-        self.lista_de_perfis.setPlaceholderText("usuario senha\nusuario senha\nusuario senha\nusuario\nusuario\nusuario")  
+        self.lista_de_perfis.setPlaceholderText("usuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha")  
         label_modo = QLabel('Navegador Visível')
         label_modo.setAlignment(Qt.AlignCenter)
         modo = QComboBox()

@@ -33,5 +33,5 @@ def verificacao_contas(pagina, usuario):
         
     except Exception as e:
         mensagem_erro(f'Não foi possível verificar a conta {usuario}. Erro: {e}')
-
+        pagina.reload()
         return 3
