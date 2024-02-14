@@ -1,4 +1,3 @@
-
 import sys
 
 from PyQt5.QtCore import Qt
@@ -15,7 +14,8 @@ from storage.config.credenciais import carregar_credenciais, salvar_credenciais
 def interface_login(app):
     window = QWidget()
     window.setWindowTitle('IR Automações')
-    window.resize(500, 300)  # Definindo o tamanho da janela
+    window.resize(350, 600)  # Definindo o tamanho da janela
+    
 
     layout = QVBoxLayout()
     window.setLayout(layout)
@@ -139,6 +139,9 @@ def interface_login(app):
                 window.close()
 
     login_button.clicked.connect(handle_login)
+
+    # Altera o cursor para o ícone de mão ao passar sobre o botão "Iniciar"
+    login_button.setCursor(Qt.PointingHandCursor)
 
     window.setLayout(layout)
     window.show()

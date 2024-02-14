@@ -19,6 +19,10 @@ def obter_data_hora_atual_ntp():
             return datetime.fromtimestamp(tempo_unix, tz=tz_brasil)
     except Exception as e:
         print(f"Erro ao obter tempo do NTP: {e}")
+        
+        # Gravando o erro em um arquivo de log
+        with open('./logs/banco_de_dados_error.txt', 'a+') as arquivo:
+            arquivo.write(f'Erro ao obter tempo do NTP. Código: {str(e)}\n\n')
     return None
 
 # Função para verificar o status do plano semanal
@@ -59,7 +63,7 @@ def verificar_login(email, password, window, app):
                 stored_device_id = usuario.get("device_unique_id")
                 if stored_device_id:  # Se já há um identificador registrado
                     if stored_device_id != device_unique_id:  # Se o identificador atual não corresponde ao registrado
-                        window.setText('<font color="red">Login bloqueado! Proibido uso de login em máquinas diferentes!</font>')
+                        QMessageBox.information(window, 'IR Automações', f'<font color="red">Login bloqueado! Proibido uso de login em máquinas diferentes.</font>')
                         return False
                 else:  # Se não há um identificador registrado, armazena o identificador atual
                     colecao.update_one({"email": email}, {"$set": {"device_unique_id": device_unique_id}})
@@ -78,6 +82,7 @@ def verificar_login(email, password, window, app):
 
                     # Exibe uma janela popup com o tempo restante em dias
                     QMessageBox.information(window, 'IR Automações', f'<font color="Lime">Login realizado com sucesso!</font>')
+                    
 
                     # Exibe uma janela popup com o tempo restante em dias
                     QMessageBox.information(window, 'Tempo restante', f'<font color="yellow">Seu plano expira em:</font> {dias_restantes} dias')
@@ -97,4 +102,5 @@ def verificar_login(email, password, window, app):
             return False
     except pymongo.errors.ConnectionFailure:
         window.setText('Erro! Mude para DNS da Google')
+        
         return False

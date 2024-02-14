@@ -5,8 +5,7 @@ from mensagens.mensagens_coloridas import (mensagem_erro, mensagem_normal,
 
 def acessar_perfil_instagram(pagina, usuario, senha):
     try:
-        
-        mensagem_normal('Fazendo login no Instagram')
+        mensagem_normal(f'{usuario} - Fazendo login no Instagram')
         
         # Site instagram
         pagina.goto('https://www.instagram.com/')
@@ -29,8 +28,12 @@ def acessar_perfil_instagram(pagina, usuario, senha):
         contas_ativas(usuario, senha)
         
         return True
-    except:
-        mensagem_erro('Erro ao fazer login. Tentando outra conta!')
+    except Exception as e:
+        mensagem_erro(f'Erro ao fazer login: {str(e)}')
         nao_fez_login(usuario, senha)
+        
+        # Gravando o erro em um arquivo de log
+        with open('./logs/instagram_error.txt', 'a+') as arquivo:
+            arquivo.write(f'Erro na arquivo acessar_perfil_instagram.py. Código: {str(e)}\n\n')
+        
         return False
-    

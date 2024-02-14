@@ -4,8 +4,9 @@ from threading import Thread
 from playwright.sync_api import sync_playwright
 from PyQt5.QtCore import QObject, Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
-                             QPushButton, QTextEdit, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QComboBox, QDesktopWidget,
+                             QHBoxLayout, QLabel, QPushButton, QTextEdit,
+                             QVBoxLayout, QWidget)
 
 from main import run
 from styles.css_verificador import estilo_verificador
@@ -31,7 +32,6 @@ class Contadores(QObject):
         self.contador_bug_atualizado.emit(self.contador_bug)
 
 
-
 class MainWindow(QWidget):
     fechar_sinal = pyqtSignal()
 
@@ -39,94 +39,95 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle('IR Automações')
-        self.resize(500, 300)
+        
+        self.resize(350, 600)  # Definindo o tamanho da janela
 
-        screen_geometry = QApplication.desktop().screenGeometry()
-        x = (screen_geometry.width() - self.width()) // 2
-        y = (screen_geometry.height() - self.height()) // 8
+        # Centraliza a janela na tela
+        screen_geometry = QDesktopWidget().screenGeometry()
+        width = screen_geometry.width()
+        height = screen_geometry.height()
+        window_width = self.width()
+        window_height = self.height()
+        x = (width - window_width) // 2
+        y = (height - window_height) // 8
         self.move(x, y)
 
+        # Definindo icone da interface
         icon = QIcon('./storage/img/irvtbot.png')
         self.setWindowIcon(icon)
 
+        # Definindo a logo da interface
         logo = './storage/img/verificador.png'
         icone_logo = QIcon(logo)
-        label_icone = QLabel()
-        pixmap = icone_logo.pixmap(250, 250)
-        label_icone.setPixmap(pixmap)
-        label_icone.setAlignment(Qt.AlignCenter)
 
+
+        # Define um layout principal vertical
         layout = QVBoxLayout()
 
-        quebra_linha = QLabel('')
+        # Título centralizado
+        label_icone = QLabel()
+        icone_logo = QIcon('./storage/img/verificador.png')
+        label_icone.setPixmap(icone_logo.pixmap(250, 250))
+        label_icone.setAlignment(Qt.AlignCenter)
+        layout.addWidget(label_icone)
 
-        label_perfis = QLabel('Digite os perfis do Instagram')
+        # Formulário
+        label_perfis = QLabel('Digite os perfis do Instagram:')
         label_perfis.setAlignment(Qt.AlignCenter)
-        self.text_edit_perfis = QTextEdit()
+        self.lista_de_perfis = QTextEdit()
+        # Adicionando o placeholder
+        self.lista_de_perfis.setPlaceholderText("usuario senha\nusuario senha\nusuario senha\nusuario\nusuario\nusuario")  
         label_modo = QLabel('Navegador Visível')
         label_modo.setAlignment(Qt.AlignCenter)
-        combo_modo = QComboBox()
-        combo_modo.addItems(['Sim', 'Não'])
+        modo = QComboBox()
+        modo.addItems(['Sim', 'Não'])
+        label_navegador = QLabel('Navegador padrão')
+        label_navegador.setAlignment(Qt.AlignCenter)
+        navegador = QComboBox()
+        navegador.addItems(['Brave', 'Google Chrome', 'Edge'])
 
+        layout.addWidget(label_perfis)
+        layout.addWidget(self.lista_de_perfis)
+        layout.addWidget(label_modo)
+        layout.addWidget(modo)
+        layout.addWidget(label_navegador)
+        layout.addWidget(navegador)
+
+        # Botão Iniciar
         btn_iniciar = QPushButton('Iniciar')
-        btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(self.text_edit_perfis.toPlainText().strip(), combo_modo.currentText()))
+        # Altera o cursor para o ícone de mão ao passar sobre o botão "Iniciar"
+        btn_iniciar.setCursor(Qt.PointingHandCursor)
+        btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(
+            self.lista_de_perfis.toPlainText().strip(), modo.currentText(), navegador.currentText()))
+        layout.addWidget(btn_iniciar)
 
+        # Layout para os contadores
         layout_horizontal = QHBoxLayout()
 
-        layoult_ativa = QHBoxLayout()
-        layoult_inativa = QHBoxLayout()
-        layoult_bug = QHBoxLayout()
+        # Contadores
+        for icon_path in ['./storage/img/check.png', './storage/img/trash.png', './storage/img/complain.png']:
+            label = QLabel()
+            label.setPixmap(QIcon(icon_path).pixmap(100, 100))
+            layout_horizontal.addWidget(label)
+            mensagem = QLabel()
+            layout_horizontal.addWidget(mensagem)
+            if icon_path == './storage/img/check.png':
+                self.mensagem_ativa = mensagem
+            elif icon_path == './storage/img/trash.png':
+                self.mensagem_inativa = mensagem
+            elif icon_path == './storage/img/complain.png':
+                self.mensagem_bug = mensagem
 
-        icone_ativa = QIcon('./storage/img/check.png')
-        label_ativa = QLabel()
-        pixmap = icone_ativa.pixmap(100, 100)
-        label_ativa.setPixmap(pixmap)
-
-        icone_desativada = QIcon('./storage/img/trash.png')
-        label_desativada = QLabel()
-        pixmap = icone_desativada.pixmap(100, 100)
-        label_desativada.setPixmap(pixmap)
-
-        icone_bug = QIcon('./storage/img/complain.png')
-        label_bug = QLabel()
-        pixmap = icone_bug.pixmap(100, 100)
-        label_bug.setPixmap(pixmap)
-
-        layoult_ativa.setAlignment(Qt.AlignCenter)
-        layoult_inativa.setAlignment(Qt.AlignCenter)
-        layoult_bug.setAlignment(Qt.AlignCenter)
-
-        self.mensagem_ativa = QLabel()
-        self.mensagem_inativa = QLabel()
-        self.mensagem_bug = QLabel()
-
-        layoult_ativa.addWidget(label_ativa)
-        layoult_ativa.addWidget(self.mensagem_ativa)
-        layoult_inativa.addWidget(label_desativada)
-        layoult_inativa.addWidget(self.mensagem_inativa)
-        layoult_bug.addWidget(label_bug)
-        layoult_bug.addWidget(self.mensagem_bug)
-
-        layout_horizontal.addLayout(layoult_ativa)
-        layout_horizontal.addLayout(layoult_inativa)
-        layout_horizontal.addLayout(layoult_bug)
-
-        layout.addWidget(label_icone)
-        layout.addWidget(quebra_linha)
-        layout.addWidget(label_perfis)
-        layout.addWidget(self.text_edit_perfis)
-        layout.addWidget(quebra_linha)
-        layout.addWidget(label_modo)
-        layout.addWidget(combo_modo)
-        layout.addWidget(quebra_linha)
-        layout.addWidget(btn_iniciar)
         layout.addLayout(layout_horizontal)
 
+        # Aplica o layout à janela principal
         self.setLayout(layout)
 
+        # Carrega o estilo CSS
         estilo = estilo_verificador()
         self.setStyleSheet(estilo)
 
+        # Conecta o sinal fechar_sinal ao método closeEvent
         self.fechar_sinal.connect(self.closeEvent)
 
         # QTimer para atualizar a interface a cada segundo
@@ -137,16 +138,17 @@ class MainWindow(QWidget):
         # Instância global da classe Contadores
         self.contadores = Contadores()
 
-    def iniciar_em_thread(self, perfis, modo):
-        thread = Thread(target=self.iniciar, args=(perfis, modo))
+    def iniciar_em_thread(self, perfis, modo, navegadores):
+        thread = Thread(target=self.iniciar, args=(perfis, modo, navegadores))
         thread.start()
 
-    def iniciar(self, perfis, modo):
+    def iniciar(self, perfis, modo, navegadores):
         def callback(contador_ativas, contador_inativas, contador_bug):
-            self.contadores.atualizar_contadores(contador_ativas, contador_inativas, contador_bug)
+            self.contadores.atualizar_contadores(
+                contador_ativas, contador_inativas, contador_bug)
 
         playwright = sync_playwright().start()
-        run(playwright, modo, perfis, callback)  # Passando a função de callback como argumento
+        run(playwright, modo, navegadores, perfis, callback)
         playwright.stop()
 
     def closeEvent(self, event):

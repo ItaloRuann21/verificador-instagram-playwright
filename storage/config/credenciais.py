@@ -2,18 +2,24 @@ import configparser
 
 
 def salvar_credenciais(email, senha):
-    # Cria uma instância do ConfigParser
-    config = configparser.ConfigParser()
+    
+    try:
+        # Cria uma instância do ConfigParser
+        config = configparser.ConfigParser()
 
-    # Abre o arquivo de configuração (ou cria se não existir)
-    config.read('./storage/config/config.ini')
+        # Abre o arquivo de configuração (ou cria se não existir)
+        config.read('./storage/config/config.ini')
 
-    # Adiciona as informações de email e senha ao arquivo de configuração
-    config['Credenciais'] = {'email': email, 'senha': senha}
+        # Adiciona as informações de email e senha ao arquivo de configuração
+        config['Credenciais'] = {'email': email, 'senha': senha}
 
-    # Salva as alterações no arquivo de configuração
-    with open('./storage/config/config.ini', 'w') as config_file:
-        config.write(config_file)
+        # Salva as alterações no arquivo de configuração
+        with open('./storage/config/config.ini', 'w') as config_file:
+            config.write(config_file)
+    except Exception as e:
+        
+        with open('./logs/error.txt', 'a+') as arquivo:
+            arquivo.write(f'Erro ao pegar credenciais no arquivo credenciais.py. Código: {str(e)}\n\n')
 
 def carregar_credenciais():
     # Cria uma instância do ConfigParser

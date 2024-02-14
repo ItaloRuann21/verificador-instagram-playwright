@@ -1,9 +1,8 @@
-from contas import contas_ativas, contas_inativas, erro_ao_verificar
 from mensagens.mensagens_coloridas import (mensagem_erro, mensagem_fim,
-                                           mensagem_normal, mensagem_sucesso)
+                                           mensagem_sucesso)
 
 
-def verificacao_contas(pagina, usuario, senha):
+def verificacao_contas(pagina, usuario):
     try:
         
         link_conta = f'https://www.instagram.com/{usuario}/'
