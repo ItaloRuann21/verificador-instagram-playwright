@@ -53,7 +53,7 @@ def run(playwright, modo, navegadores, perfis, callback):
                 break
 
         # Verificação das contas
-        primeiros_perfis = lista_perfis[:5]  # Obtém os 5 primeiros perfis da lista
+        primeiros_perfis = lista_perfis[:10]  # Obtém os 5 primeiros perfis da lista
 
         for perfil in lista_perfis:
             values = perfil.split()
