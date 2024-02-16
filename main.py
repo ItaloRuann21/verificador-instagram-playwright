@@ -52,17 +52,17 @@ def run(playwright, modo, navegadores, perfis, callback):
                 callback(contador_ativas, contador_inativas, contador_bug)  # Chamada do callback
                 break
 
-        # Verificação das contas
-        primeiros_perfis = lista_perfis[:10]  # Obtém os 10 primeiros perfis da lista
+        indice_perfil = 1
 
         for perfil in lista_perfis:
-            values = perfil.split()
-            if len(values) != 2:
-                continue
+            # Separando os valores do perfil atual
+            valores = perfil.split()
 
-            usuario_instagram, senha_instagram = values
+            # Coletando usuario e senha da lista_perfis
+            usuario_instagram = valores[0].strip()
+            senha_instagram = valores[1].strip()
 
-            # Realiza a verificação da conta
+            # Realizando a verificação da conta
             res = verificacao_contas(pagina, usuario_instagram)
             
             # Verificando pela quantidade de publicações se a conta está vazia ou não
@@ -97,17 +97,31 @@ def run(playwright, modo, navegadores, perfis, callback):
                 navegador.close()
                 navegador, pagina = abrir_navegador(playwright, modo, navegadores)
                 
-                # Seleciona a próxima conta da lista original
-                indice_conta = lista_perfis.index(perfil) + 1
-                if indice_conta < len(lista_perfis):
-                    proximo_perfil = lista_perfis[indice_conta]
-                    proximo_usuario_instagram, proxima_senha_instagram = proximo_perfil.split()
-                    acessar_perfil_instagram(pagina, proximo_usuario_instagram, proxima_senha_instagram)
-                    continue
+                try:
+                    outros_perfis = lista_perfis[indice_perfil]
+                    novo_usuario, nova_senha = outros_perfis.split()
+                except Exception as abre:
+                    print(abre)
+                
+                res = acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
+                
+                if res == False:
+                    navegador.close()
+                    navegador, pagina = abrir_navegador(playwright, modo, navegadores)
+                    acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
+                else:
+                    pass
+                
+                indice_perfil += 1
+                
+                continue
                     
+                
+
         # Exibe uma mensagem de fim após a verificação de todas as contas
         mensagem_fim('TODAS AS CONTAS JÁ FORAM VERIFICADAS!')
-        return contador_ativas, contador_inativas, contador_bug  
+        return contador_ativas, contador_inativas, contador_bug
+
 
     except Exception as e:
         # Exibe uma mensagem de erro se ocorrer uma exceção

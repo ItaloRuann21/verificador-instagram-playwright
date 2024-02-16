@@ -1,3 +1,4 @@
+import json
 import sys
 from threading import Thread
 
@@ -31,7 +32,6 @@ class Contadores(QObject):
         self.contador_inativas_atualizado.emit(self.contador_inativas)
         self.contador_bug_atualizado.emit(self.contador_bug)
 
-
 class MainWindow(QWidget):
     fechar_sinal = pyqtSignal()
 
@@ -60,7 +60,6 @@ class MainWindow(QWidget):
         logo = './storage/img/verificador.png'
         icone_logo = QIcon(logo)
 
-
         # Define um layout principal vertical
         layout = QVBoxLayout()
 
@@ -79,26 +78,26 @@ class MainWindow(QWidget):
         self.lista_de_perfis.setPlaceholderText("usuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha")  
         label_modo = QLabel('Navegador Visível')
         label_modo.setAlignment(Qt.AlignCenter)
-        modo = QComboBox()
-        modo.addItems(['Sim', 'Não'])
+        self.modo = QComboBox()  # Removido o modo local para que possa ser acessado globalmente
+        self.modo.addItems(['Sim', 'Não'])
         label_navegador = QLabel('Navegador padrão')
         label_navegador.setAlignment(Qt.AlignCenter)
-        navegador = QComboBox()
-        navegador.addItems(['Brave', 'Google Chrome', 'Edge'])
+        self.navegador = QComboBox()  # Removido o navegador local para que possa ser acessado globalmente
+        self.navegador.addItems(['Brave', 'Google Chrome', 'Edge'])
 
         layout.addWidget(label_perfis)
         layout.addWidget(self.lista_de_perfis)
         layout.addWidget(label_modo)
-        layout.addWidget(modo)
+        layout.addWidget(self.modo)
         layout.addWidget(label_navegador)
-        layout.addWidget(navegador)
+        layout.addWidget(self.navegador)
 
         # Botão Iniciar
         btn_iniciar = QPushButton('Iniciar')
         # Altera o cursor para o ícone de mão ao passar sobre o botão "Iniciar"
         btn_iniciar.setCursor(Qt.PointingHandCursor)
         btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(
-            self.lista_de_perfis.toPlainText().strip(), modo.currentText(), navegador.currentText()))
+            self.lista_de_perfis.toPlainText().strip(), self.modo.currentText(), self.navegador.currentText()))
         layout.addWidget(btn_iniciar)
 
         # Layout para os contadores
@@ -133,10 +132,17 @@ class MainWindow(QWidget):
         # QTimer para atualizar a interface a cada segundo
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.atualizar_interface)
-        self.timer.start(0000)  # 1000 ms = 1 segundo
+        self.timer.start(1000)  # 1000 ms = 1 segundo
 
         # Instância global da classe Contadores
         self.contadores = Contadores()
+
+        # Carregar conteúdo do arquivo JSON ao iniciar
+        self.carregar_conteudo()
+
+        # Conectar sinais de alteração nos ComboBoxes aos slots correspondentes
+        self.modo.currentIndexChanged.connect(self.atualizar_conteudo)
+        self.navegador.currentIndexChanged.connect(self.atualizar_conteudo)
 
     def iniciar_em_thread(self, perfis, modo, navegadores):
         thread = Thread(target=self.iniciar, args=(perfis, modo, navegadores))
@@ -152,6 +158,7 @@ class MainWindow(QWidget):
         playwright.stop()
 
     def closeEvent(self, event):
+        self.salvar_conteudo()  # Salva o conteúdo antes de fechar
         self.fechar_sinal.emit()
         event.accept()
 
@@ -161,6 +168,32 @@ class MainWindow(QWidget):
         self.mensagem_inativa.setText(str(self.contadores.contador_inativas))
         self.mensagem_bug.setText(str(self.contadores.contador_bug))
 
+    def carregar_conteudo(self):
+        try:
+            with open('./storage/config/localStorage.json', 'r') as file:
+                data = json.load(file)
+                conteudo_salvo = data.get('configs', '')
+                self.lista_de_perfis.setPlainText(conteudo_salvo)
+                # Carrega as escolhas anteriores dos ComboBoxes
+                modo_salvo = data.get('modo', '')
+                if modo_salvo:
+                    self.modo.setCurrentIndex(self.modo.findText(modo_salvo))
+                navegador_salvo = data.get('navegador', '')
+                if navegador_salvo:
+                    self.navegador.setCurrentIndex(self.navegador.findText(navegador_salvo))
+        except FileNotFoundError:
+            pass
+
+    def salvar_conteudo(self):
+        conteudo = self.lista_de_perfis.toPlainText()
+        with open('./storage/config/localStorage.json', 'w') as file:
+            data = {'configs': conteudo,
+                    'modo': self.modo.currentText(),
+                    'navegador': self.navegador.currentText()}
+            json.dump(data, file)
+
+    def atualizar_conteudo(self):
+        self.salvar_conteudo()
 
 def main():
     app = QApplication(sys.argv)
@@ -168,6 +201,5 @@ def main():
     window.show()
     sys.exit(app.exec_())
 
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
