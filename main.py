@@ -94,23 +94,25 @@ def run(playwright, modo, navegadores, perfis, callback):
             elif res == False:
                 contador_bug += 1
                 erro_ao_verificar(usuario_instagram, senha_instagram)
+                
                 navegador.close()
-                navegador, pagina = abrir_navegador(playwright, modo, navegadores)
-                
-                try:
-                    outros_perfis = lista_perfis[indice_perfil]
-                    novo_usuario, nova_senha = outros_perfis.split()
-                except Exception as abre:
-                    print(abre)
-                
-                res = acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
-                
-                if res == False:
-                    navegador.close()
+
+                while True:
                     navegador, pagina = abrir_navegador(playwright, modo, navegadores)
-                    acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
-                else:
-                    pass
+                    
+                    try:
+                        outros_perfis = lista_perfis[indice_perfil]
+                        novo_usuario, nova_senha = outros_perfis.split()
+                    except Exception as abre:
+                        print(abre)
+                    
+                    res = acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
+                    
+                    if res:
+                        break  # Se res for True, saia do loop
+                    else:
+                        indice_perfil += 1
+                        navegador.close()
                 
                 indice_perfil += 1
                 
