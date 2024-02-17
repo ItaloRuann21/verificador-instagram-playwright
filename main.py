@@ -28,6 +28,10 @@ def run(playwright, modo, navegadores, perfis, callback):
         # Itera sobre cada perfil na lista de perfis
         for perfil in lista_perfis:
             
+            # Verifica se o perfil está vazio ou não contém usuário e senha
+            if not perfil.strip():
+                pass
+            
             # Divide o perfil em usuário e senha
             values = perfil.split()
             if len(values) != 2:
@@ -56,12 +60,16 @@ def run(playwright, modo, navegadores, perfis, callback):
 
         for perfil in lista_perfis:
             # Separando os valores do perfil atual
-            valores = perfil.split()
+            
 
-            # Coletando usuario e senha da lista_perfis
-            usuario_instagram = valores[0].strip()
-            senha_instagram = valores[1].strip()
-
+            try:
+                valores = perfil.split()
+                # Coletando usuario e senha da lista_perfis
+                usuario_instagram = valores[0].strip()
+                senha_instagram = valores[1].strip()
+            except:
+                pass
+            
             # Realizando a verificação da conta
             res = verificacao_contas(pagina, usuario_instagram)
             
@@ -105,6 +113,7 @@ def run(playwright, modo, navegadores, perfis, callback):
                         novo_usuario, nova_senha = outros_perfis.split()
                     except Exception as abre:
                         print(abre)
+                        pass
                     
                     res = acessar_perfil_instagram(pagina, novo_usuario, nova_senha)
                     

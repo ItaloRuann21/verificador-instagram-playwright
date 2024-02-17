@@ -5,5 +5,4 @@ pytz
 playwright
 termcolor
 pyinstaller
-Pillow
 PyQt5

@@ -133,7 +133,7 @@ def interface_login(app):
             if verificar_login(email, password, mensagem_label, app):
                 # Se o login for bem-sucedido, cria e exibe a outra interface
                 salvar_credenciais(email, password)
-                mensagem_atualização(window)
+                # mensagem_atualização(window)
                 main_window = MainWindow()
                 main_window.show()
                 window.close()
