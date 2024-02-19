@@ -1,8 +1,8 @@
 ntplib
 pymongo
-pysimplegui
 pytz
 playwright
 termcolor
 pyinstaller
 PyQt5
+Pillow
