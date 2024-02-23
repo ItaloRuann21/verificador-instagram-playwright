@@ -6,3 +6,4 @@ termcolor
 pyinstaller
 PyQt5
 Pillow
+instaloader
