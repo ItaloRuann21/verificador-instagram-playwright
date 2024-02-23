@@ -1,0 +1,2 @@
+Ocorreu um erro na no arquivo main.py. Código: cannot access local variable 'usuario_instagram' where it is not associated with a value
+

@@ -4,12 +4,13 @@ from contas import (contas_ativas, contas_inativas, contas_vazias,
                     erro_ao_verificar, nao_fez_login)
 from instagram.acessar_perfil_instagram import acessar_perfil_instagram
 from instagram.detalhes_do_perfil import publicacoes
+from instagram.pegar_links_fotos import pegar_link_perfis
 from instagram.verificar_contas import verificacao_contas
 from mensagens.mensagens_coloridas import mensagem_fim, mensagem_titulo
 
 
 # Define a função principal
-def run(playwright, modo, navegadores, perfis, callback):
+def run(playwright, modo, navegadores, perfis, callback, link_fotos):
     try:
         # Exibe uma mensagem de título
         mensagem_titulo('Iniciando Verificação')
@@ -84,6 +85,12 @@ def run(playwright, modo, navegadores, perfis, callback):
                 # Neste caso, optamos por não fazer nada (passar)
                 pass
             
+            if link_fotos == 'Sim':
+                pegar_fotos = pegar_link_perfis(usuario_instagram)
+                
+                if pegar_fotos == False:
+                    pass
+                
             # Atualiza os contadores e chama o callback com base no resultado da verificação
             if res == 1:
                 contador_ativas += 1
