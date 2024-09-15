@@ -32,6 +32,7 @@ class Contadores(QObject):
         self.contador_inativas_atualizado.emit(self.contador_inativas)
         self.contador_bug_atualizado.emit(self.contador_bug)
 
+
 class MainWindow(QWidget):
     fechar_sinal = pyqtSignal()
 
@@ -85,7 +86,8 @@ class MainWindow(QWidget):
         label_perfis.setAlignment(Qt.AlignCenter)
         layout_central.addWidget(label_perfis)
         self.lista_de_perfis = QTextEdit()
-        self.lista_de_perfis.setPlaceholderText("usuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha")
+        self.lista_de_perfis.setPlaceholderText(
+            "usuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha\nusuario senha")
         layout_central.addWidget(self.lista_de_perfis)
         label_modo = QLabel('Navegador Visível')
         label_modo.setAlignment(Qt.AlignCenter)
@@ -99,13 +101,6 @@ class MainWindow(QWidget):
         self.navegador = QComboBox()
         self.navegador.addItems(['Brave', 'Google Chrome', 'Edge'])
         layout_central.addWidget(self.navegador)
-        label_link_posts = QLabel('Salvar link de fotos de cada perfil\nObs: A verificação ficará lenta.')
-        label_link_posts.setAlignment(Qt.AlignCenter)
-        layout_central.addWidget(label_link_posts)
-        self.link_posts = QComboBox()
-        self.link_posts.addItems(['Sim', 'Não'])
-        layout_central.addWidget(self.link_posts)
-
 
         # Adiciona um espaço flexível para empurrar os widgets para cima
         layout_central.addStretch()
@@ -117,7 +112,7 @@ class MainWindow(QWidget):
         btn_iniciar = QPushButton('Iniciar')
         btn_iniciar.setCursor(Qt.PointingHandCursor)
         btn_iniciar.clicked.connect(lambda: self.iniciar_em_thread(
-            self.lista_de_perfis.toPlainText().strip(), self.modo.currentText(), self.navegador.currentText(), self.link_posts.currentText()))
+            self.lista_de_perfis.toPlainText().strip(), self.modo.currentText(), self.navegador.currentText()))
         layout_fixo.addWidget(btn_iniciar)
 
         # Layout para os contadores
@@ -164,17 +159,17 @@ class MainWindow(QWidget):
         self.modo.currentIndexChanged.connect(self.atualizar_conteudo)
         self.navegador.currentIndexChanged.connect(self.atualizar_conteudo)
 
-    def iniciar_em_thread(self, perfis, modo, navegadores, link_fotos):
-        thread = Thread(target=self.iniciar, args=(perfis, modo, navegadores, link_fotos))
+    def iniciar_em_thread(self, perfis, modo, navegadores):
+        thread = Thread(target=self.iniciar, args=(perfis, modo, navegadores))
         thread.start()
 
-    def iniciar(self, perfis, modo, navegadores, link_fotos):
+    def iniciar(self, perfis, modo, navegadores):
         def callback(contador_ativas, contador_inativas, contador_bug):
             self.contadores.atualizar_contadores(
                 contador_ativas, contador_inativas, contador_bug)
 
         playwright = sync_playwright().start()
-        run(playwright, modo, navegadores, perfis, callback, link_fotos)
+        run(playwright, modo, navegadores, perfis, callback)
         playwright.stop()
 
     def closeEvent(self, event):
@@ -200,10 +195,8 @@ class MainWindow(QWidget):
                     self.modo.setCurrentIndex(self.modo.findText(modo_salvo))
                 navegador_salvo = data.get('navegador', '')
                 if navegador_salvo:
-                    self.navegador.setCurrentIndex(self.navegador.findText(navegador_salvo))
-                link_fotos_salvo = data.get('modo_link_fotos', '')
-                if link_fotos_salvo:
-                    self.link_posts.setCurrentIndex(self.link_posts.findText(link_fotos_salvo))
+                    self.navegador.setCurrentIndex(
+                        self.navegador.findText(navegador_salvo))
         except FileNotFoundError:
             pass
 
@@ -212,13 +205,13 @@ class MainWindow(QWidget):
         with open('./storage/config/localStorage.json', 'w') as file:
             data = {'configs': conteudo,
                     'modo': self.modo.currentText(),
-                    'navegador': self.navegador.currentText(),
-                    'modo_link_fotos': self.link_posts.currentText()
+                    'navegador': self.navegador.currentText()
                     }
             json.dump(data, file)
 
     def atualizar_conteudo(self):
         self.salvar_conteudo()
+
 
 def main():
     app = QApplication(sys.argv)
