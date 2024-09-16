@@ -49,4 +49,4 @@ def verificacao_contas(pagina, usuario):
         mensagem_erro(f'Não foi possível verificar a conta {
                       usuario}. Erro: {e}')
         pagina.reload()
-        return 3
+        return False

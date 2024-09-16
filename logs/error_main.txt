@@ -4,3 +4,8 @@ Ocorreu um erro na no arquivo main.py. Código: cannot access local variable 'qua
 
 Ocorreu um erro na no arquivo main.py. Código: cannot access local variable 'quantidade_fotos' where it is not associated with a value
 
+Ocorreu um erro na no arquivo main.py. Código: Page.reload: Protocol error (Page.reload): Not attached to an active page
+Call log:
+waiting for navigation until "load"
+
+
