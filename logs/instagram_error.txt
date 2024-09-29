@@ -1,0 +1,7 @@
+Erro na arquivo acessar_perfil_instagram.py. Código: Page.wait_for_selector() got an unexpected keyword argument 'timeoout'
+
+Erro na arquivo acessar_perfil_instagram.py. Código: Page.wait_for_selector: Timeout 60000ms exceeded.
+Call log:
+waiting for locator("span:has-text(\"Página inicial\")") to be visible
+
+
